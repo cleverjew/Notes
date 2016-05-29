@@ -1,8 +1,6 @@
 <?php
-$_SESSION["log"] = null;
-echo "
-<script>
-window.location='index.php';
-</script>
-";
+	session_start();
+	unset($_SESSION['session_username']);
+	session_destroy();
+	header("location:index.php");
 ?>

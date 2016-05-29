@@ -1,64 +1,63 @@
-<html>
+<?php require_once("includes/connection.php"); ?>
+<?php include("includes/header.php");?>
+<?php
+  session_start();
+?>
 
-<head>
-    <meta charset="utf-8">
-    <title>Notes</title>
-</head>
+  <?php require_once("includes/connection.php"); ?>   
+<?php
+  
+  if(isset($_SESSION["session_username"])){
+  // вывод "Session is set"; // в целях проверки
+ header("Location: notes.php");
+  }
 
-<body>
-    <div class="form">
-        <form>
-            <h1>Вход:</h1>
-            <input placeholder="Логин" name="log">
-            <input type="password" placeholder="Пароль" name="pass">
-            <button type="submit" name="type" value="Вход">Вход</button>
-            <button type="submit" name="type" value="Регистрация">Регистрация</button>
-        </form>
-    </div>
+  if(isset($_POST["login"])){
 
-    <?php if ($_SESSION[ 'log']!=null){ echo "<script>
-            window.location='notes.php';
-        </script>"; } else { $log=$_GET[ 'log']; 
-        $pass=$_GET['pass'];
-        $type=$_GET['type']; $db=new MongoClient(); 
-        $users=$db->notes->users; 
-        $user = array( "username" => $log, "password" => $pass);
-        $content=$users->findOne($user);
-        if ($content==null and $type=="Вход"){ 
-            echo '
-    <script>
-        alert("Неверный логин или пароль");
-        window.location = "index.php";
-    </script>';
-     return false;
-      } 
-    if ($content==null and $type=="Регистрация")
-        { 
-            $users->insert($user); echo '
-    <script>
-        alert("Регистрация завершена");
-    </script>';
-     return false;
-      } 
-      if ($log!=null and pass!=null and $type=="Регистрация")
-        {
-         echo '
-    <script>
-        alert("Имя пользователя занято");
-    </script>';
-     return false;
-      }
-       if ($content!=null and $type=="Вход")
-        { 
-            echo '
-    <script>
-        window.location = "notes.php";
-    </script>';
-     $_SESSION["log"] = $content["username"];
-      return true;
-      }
-    }
-        ?>
+  if(!empty($_POST['username']) && !empty($_POST['password'])) {
+  $username=htmlspecialchars($_POST['username']);
+  $password=htmlspecialchars($_POST['password']);
+  $query=mysql_query("SELECT * FROM usertbl WHERE username='".$username."' AND password='".$password."'");
+  $numrows=mysql_num_rows($query);
+  if($numrows!=0)
+ {
+while($row=mysql_fetch_assoc($query))
+ {
+  $dbusername=$row['username'];
+  $dbpassword=$row['password'];
+ }
+  if($username == $dbusername && $password == $dbpassword)
+ {
+  // старое место расположения
+  //  session_start();
+   $_SESSION['session_username']=$username;  
+ /* Перенаправление браузера */
+   header("Location: notes.php");
+  }
+  } else {
+  
+  echo  "Неверное имя пользователя или пароль!";
+ }
+  } else {
+    $message = "Все поля обязательны для заполнения!";
+  }
+  }
+?>
+
+<div class="container mlogin">
+<div id="login">
+<h1>Вход</h1>
+<form action="" id="loginform" method="post"name="loginform">
+<p><label for="user_login">Имя опльзователя<br>
+<input class="input" id="username" name="username"size="20"
+type="text" value=""></label></p>
+<p><label for="user_pass">Пароль<br>
+ <input class="input" id="password" name="password"size="20"
+  type="password" value=""></label></p> 
+  <p class="submit"><input class="button" name="login"type= "submit" value="Log In"></p>
+  <p class="regtext">Еще не зарегистрированы?<a href= "register.php">Регистрация</a>!</p>
+   </form>
+ </div>
+  </div>
 </body>
-
 </html>
