@@ -1,19 +1,28 @@
+<?php include("includes/header.php");?>
+<form method="POST" action="notes.php" class="contact">
 <?php
-$db=new MongoClient();
-$notes=$db->notes->notes;
-$log=$_SESSION['log'];
-$title=$_GET['title'];
-$text=$_GET['text'];
-$res = $notes->find();
- echo "
-<script>
-window.location='notes.php?title=".$title."&text=".$text."';
-</script>";
-foreach ($res as $inf) {
-  	if ($inf['acc']==$log && $inf['title']==$title && $inf['text']==$text){
-  		$notes->remove($inf);
-  		break;
-  	}
-  
- }
+session_start();
+require 'includes/connection.php';
+    $id = $_POST['ednote'];
+    $_SESSION['id'] = $id;
+    $query = mysql_query("SELECT * FROM notes WHERE id='$id'");
+    $row = mysql_fetch_array($query);
+    $title = $row['title'];
+    $text = $row['text'];
+        echo "<fieldset>
+      <p>
+        <input type='text' name='edtitle' cols='20' value='$title' autofocus>
+      </p>
+
+      <p class='contact-input'>
+        <textarea name='edtext' cols='60' >$text</textarea>
+      </p>
+
+      <p>
+        <input type='submit' class='btn btn-warning' value='Сохранить'>
+      </p>
+    </fieldset>
+  </form>";
 ?>
+</form>
+</<body>

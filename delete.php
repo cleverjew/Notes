@@ -1,21 +1,11 @@
-<?php
-$db=new MongoClient();
-$notes=$db->notes->notes;
-$log=$_SESSION['log'];
-$title=$_GET['title'];
-$text=$_GET['text'];
-$res = $notes->find();
-foreach ($res as $inf) {
-  	if ($inf['acc']==$log && $inf['title']==$title && $inf['text']==$text){
-  		$notes->remove($inf);
-  		break;
+<?php include("includes/header.php");?>
+<?php 
+session_start();
+require 'includes/connection.php';
 
-  	}
-  
- }
- echo "
-<script>
-window.location='notes.php';
-</script>
-";
-?>
+    $id = $_POST['delnote'];
+	mysql_query("DELETE FROM notes WHERE id='$id'");
+	header('location: notes.php');
+	?>
+</body>
+</html>
